@@ -149,17 +149,17 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] p-0">
+      <DialogContent className="max-w-2xl max-h-[95vh] p-0">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-xl font-bold">
             {initialData ? "Etkinliği Düzenle / Edit Event" : "Yeni Etkinlik Oluştur / Create New Event"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-[calc(90vh-100px)]">
-          <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4">
+        <ScrollArea className="max-h-[calc(95vh-80px)]">
+          <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-6">
             {/* Club */}
-            <div className="flex flex-col gap-1">
-              <Label className="text-xs font-semibold">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-semibold">
                 Düzenleyen Kulüp veya Topluluk / Club or Society
               </Label>
               <Popover open={clubOpen} onOpenChange={setClubOpen}>
@@ -179,7 +179,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                 <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Kulüp ara / Search club..." />
-                    <CommandList>
+                    <CommandList className="max-h-[200px] overflow-y-auto">
                       <CommandEmpty>Kulüp bulunamadı. / No club found.</CommandEmpty>
                       <CommandGroup>
                         {CLUBS.map((c, i) => (
@@ -208,20 +208,20 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
             </div>
 
             {/* Title */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-5">
               <div>
-                <Label className="text-xs font-semibold">Etkinlik Adı (TR) / Activity Title (TR)</Label>
-                <Input className="mt-1" value={titleTr} onChange={(e) => setTitleTr(e.target.value)} placeholder="Türkçe başlık" />
+                <Label className="text-sm font-semibold">Etkinlik Adı (TR) / Activity Title (TR)</Label>
+                <Input className="mt-1.5" value={titleTr} onChange={(e) => setTitleTr(e.target.value)} placeholder="Türkçe başlık" />
               </div>
               <div>
-                <Label className="text-xs font-semibold">Etkinlik Adı (EN) / Activity Title (EN)</Label>
-                <Input className="mt-1" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} placeholder="English title" />
+                <Label className="text-sm font-semibold">Etkinlik Adı (EN) / Activity Title (EN)</Label>
+                <Input className="mt-1.5" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} placeholder="English title" />
               </div>
             </div>
 
             {/* Event Type */}
-            <div className="flex flex-col gap-1">
-              <Label className="text-xs font-semibold">Etkinlik Türü / Type of Activity</Label>
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-semibold">Etkinlik Türü / Type of Activity</Label>
               <Popover open={eventTypeOpen} onOpenChange={setEventTypeOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -239,7 +239,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                 <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Tür ara / Search type..." />
-                    <CommandList>
+                    <CommandList className="max-h-[200px] overflow-y-auto">
                       <CommandEmpty>Tür bulunamadı. / No type found.</CommandEmpty>
                       <CommandGroup>
                         {EVENT_TYPES.map((t, i) => (
@@ -267,49 +267,49 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
               </Popover>
             </div>
             {isOtherEventType && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <Label className="text-xs font-semibold">Etkinlik Türü (TR)</Label>
-                  <Input className="mt-1" value={customEventTypeTr} onChange={(e) => setCustomEventTypeTr(e.target.value)} placeholder="Türkçe tür" />
+                  <Label className="text-sm font-semibold">Etkinlik Türü (TR)</Label>
+                  <Input className="mt-1.5" value={customEventTypeTr} onChange={(e) => setCustomEventTypeTr(e.target.value)} placeholder="Türkçe tür" />
                 </div>
                 <div>
-                  <Label className="text-xs font-semibold">Event Type (EN)</Label>
-                  <Input className="mt-1" value={customEventTypeEn} onChange={(e) => setCustomEventTypeEn(e.target.value)} placeholder="English type" />
+                  <Label className="text-sm font-semibold">Event Type (EN)</Label>
+                  <Input className="mt-1.5" value={customEventTypeEn} onChange={(e) => setCustomEventTypeEn(e.target.value)} placeholder="English type" />
                 </div>
               </div>
             )}
 
             {/* Guest Speakers */}
             <div>
-              <Label className="text-xs font-semibold">Konuk Konuşmacı(lar) / Guest Speaker(s)</Label>
-              <Input className="mt-1" value={guestSpeakers} onChange={(e) => setGuestSpeakers(e.target.value)} placeholder="Opsiyonel / Optional" />
+              <Label className="text-sm font-semibold">Konuk Konuşmacı(lar) / Guest Speaker(s)</Label>
+              <Input className="mt-1.5" value={guestSpeakers} onChange={(e) => setGuestSpeakers(e.target.value)} placeholder="Opsiyonel / Optional" />
             </div>
 
             {/* Details */}
             <div>
-              <Label className="text-xs font-semibold">Açıklayıcı Bilgi / Details about the Activity</Label>
-              <Textarea className="mt-1" value={details} onChange={(e) => setDetails(e.target.value)} rows={2} placeholder="Etkinlik detayları / Event details" />
+              <Label className="text-sm font-semibold">Açıklayıcı Bilgi / Details about the Activity</Label>
+              <Textarea className="mt-1.5" value={details} onChange={(e) => setDetails(e.target.value)} rows={2} placeholder="Etkinlik detayları / Event details" />
             </div>
 
             {/* Date, Start Time, End Time */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-5">
               <div>
-                <Label className="text-xs font-semibold">Tarih / Date</Label>
-                <Input className="mt-1" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <Label className="text-sm font-semibold">Tarih / Date</Label>
+                <Input className="mt-1.5" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs font-semibold">Başlangıç / Start Time</Label>
-                <Input className="mt-1" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                <Label className="text-sm font-semibold">Başlangıç / Start Time</Label>
+                <Input className="mt-1.5" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs font-semibold">Bitiş / End Time</Label>
-                <Input className="mt-1" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+                <Label className="text-sm font-semibold">Bitiş / End Time</Label>
+                <Input className="mt-1.5" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
               </div>
             </div>
 
             {/* Venue */}
-            <div className="flex flex-col gap-1">
-              <Label className="text-xs font-semibold">Yer / Venue</Label>
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm font-semibold">Yer / Venue</Label>
               <Popover open={venueOpen} onOpenChange={setVenueOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -329,7 +329,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                 <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Yer ara / Search venue..." />
-                    <CommandList>
+                    <CommandList className="max-h-[200px] overflow-y-auto">
                       <CommandEmpty>Yer bulunamadı. / No venue found.</CommandEmpty>
                       <CommandGroup>
                         {VENUES.map((v, i) => (
@@ -357,22 +357,22 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
               </Popover>
             </div>
             {isOtherVenue && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <Label className="text-xs font-semibold">Yer (TR) / Venue (TR)</Label>
-                  <Input className="mt-1" value={customVenueTr} onChange={(e) => setCustomVenueTr(e.target.value)} placeholder="Türkçe yer" />
+                  <Label className="text-sm font-semibold">Yer (TR) / Venue (TR)</Label>
+                  <Input className="mt-1.5" value={customVenueTr} onChange={(e) => setCustomVenueTr(e.target.value)} placeholder="Türkçe yer" />
                 </div>
                 <div>
-                  <Label className="text-xs font-semibold">Yer (EN) / Venue (EN)</Label>
-                  <Input className="mt-1" value={customVenueEn} onChange={(e) => setCustomVenueEn(e.target.value)} placeholder="English venue" />
+                  <Label className="text-sm font-semibold">Yer (EN) / Venue (EN)</Label>
+                  <Input className="mt-1.5" value={customVenueEn} onChange={(e) => setCustomVenueEn(e.target.value)} placeholder="English venue" />
                 </div>
               </div>
             )}
 
             {/* Open To, Language, Format */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col gap-1">
-                <Label className="text-xs font-semibold">Kimlere Açık / Open to</Label>
+            <div className="grid grid-cols-3 gap-5">
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-semibold">Kimlere Açık / Open to</Label>
                 <Popover open={openToOpen} onOpenChange={setOpenToOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -388,7 +388,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                   <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                     <Command>
                       <CommandInput placeholder="Ara..." />
-                      <CommandList>
+                      <CommandList className="max-h-[200px] overflow-y-auto">
                         <CommandEmpty>Bulunamadı.</CommandEmpty>
                         <CommandGroup>
                           {OPEN_TO_OPTIONS.map((o, i) => (
@@ -416,8 +416,8 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                 </Popover>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <Label className="text-xs font-semibold">Etkinlik Dili / Language</Label>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-semibold">Etkinlik Dili / Language</Label>
                 <Popover open={languageOpen} onOpenChange={setLanguageOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -433,7 +433,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                   <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                     <Command>
                       <CommandInput placeholder="Ara..." />
-                      <CommandList>
+                      <CommandList className="max-h-[200px] overflow-y-auto">
                         <CommandEmpty>Bulunamadı.</CommandEmpty>
                         <CommandGroup>
                           {LANGUAGES.map((l, i) => (
@@ -461,8 +461,8 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                 </Popover>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <Label className="text-xs font-semibold">Yüz Yüze/Çevrimiçi</Label>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-semibold">Yüz Yüze/Çevrimiçi</Label>
                 <Popover open={formatOpen} onOpenChange={setFormatOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -480,7 +480,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                   <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                     <Command>
                       <CommandInput placeholder="Ara..." />
-                      <CommandList>
+                      <CommandList className="max-h-[200px] overflow-y-auto">
                         <CommandEmpty>Bulunamadı.</CommandEmpty>
                         <CommandGroup>
                           {FORMATS.map((f, i) => (
@@ -511,9 +511,9 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
 
             {/* GE Points */}
             <div>
-              <Label className="text-xs font-semibold">GE250-251 Puanı / GE250-251 Points</Label>
+              <Label className="text-sm font-semibold">GE250-251 Puanı / GE250-251 Points</Label>
               <Input
-                className="mt-1 w-32"
+                className="mt-1.5 w-32"
                 type="number"
                 min="0"
                 max="100"
@@ -524,7 +524,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
             </div>
 
             {/* Submit */}
-            <div className="flex justify-end gap-3 pt-2">
+            <div className="flex justify-end gap-5 pt-2">
               <Button type="button" variant="outline" onClick={onClose}>
                 İptal / Cancel
               </Button>

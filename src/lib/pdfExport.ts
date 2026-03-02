@@ -48,12 +48,18 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
       { text: "Etkinlik\nActivity", x: margin + 89, w: 40 },
       { text: "Dil\nLng", x: margin + 130, w: 10 },
       { text: "GE\n250/251", x: margin + 141, w: 14 },
-      { text: "F2F\n/\nOnL", x: margin + 156, w: 10 },
+      { text: "F2F/\nOnL", x: margin + 155.5, w: 10 },
       { text: "Etkinlikle İlgili Bilgiler\nDetails about the Activity", x: margin + 167, w: 110 }
     ];
 
     headers.forEach(h => {
-      doc.text(h.text, h.x, yPos + 4);
+      if (h.text === "F2F/\nOnL") {
+        doc.setFontSize(7);
+        doc.text(h.text, h.x, yPos + 4.5);
+        doc.setFontSize(8); // Reset
+      } else {
+        doc.text(h.text, h.x, yPos + 4);
+      }
     });
 
     // Draw column separators for header
@@ -196,7 +202,9 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     doc.text(col5, margin + 147, yPos + 4 + (rowH - 8) / 2, { align: "center" });
 
     // Col 6: Format
+    doc.setFontSize(7);
     doc.text(col6, margin + 160, yPos + 4 + (rowH - 8) / 2, { align: "center" });
+    doc.setFontSize(8);
 
     // Col 7: Details (Title bold, rest normal)
     doc.setFont("helvetica", "bold");
