@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { CalendarEvent, BilingualText } from "@/types/event";
 import { CLUBS } from "@/data/clubs";
@@ -19,9 +19,10 @@ interface EventFormProps {
   onClose: () => void;
   onSubmit: (event: CalendarEvent) => void;
   initialDate?: Date | null;
+  initialData?: CalendarEvent | null;
 }
 
-export default function EventForm({ open, onClose, onSubmit, initialDate }: EventFormProps) {
+export default function EventForm({ open, onClose, onSubmit, initialDate, initialData }: EventFormProps) {
   const [clubIndex, setClubIndex] = useState("");
   const [titleTr, setTitleTr] = useState("");
   const [titleEn, setTitleEn] = useState("");
@@ -61,6 +62,53 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
     setCustomVenueEn(""); setOpenTo(""); setLanguage(""); setGePoints(""); setFormatIndex("");
   };
 
+  useEffect(() => {
+    if (open && initialData) {
+      const cIdx = CLUBS.findIndex(c => c.tr === initialData.club.tr && c.en === initialData.club.en);
+      setClubIndex(cIdx >= 0 ? String(cIdx) : "");
+
+      setTitleTr(initialData.title.tr);
+      setTitleEn(initialData.title.en);
+
+      const tIdx = EVENT_TYPES.findIndex(t => t.tr === initialData.eventType.tr && t.en === initialData.eventType.en);
+      if (tIdx >= 0) {
+        setEventTypeIndex(String(tIdx));
+        setCustomEventTypeTr("");
+        setCustomEventTypeEn("");
+      } else if (initialData.customEventType) {
+        setEventTypeIndex(String(EVENT_TYPES.findIndex(t => t.tr === "Diğer")));
+        setCustomEventTypeTr(initialData.customEventType.tr);
+        setCustomEventTypeEn(initialData.customEventType.en);
+      }
+
+      setGuestSpeakers(initialData.guestSpeakers || "");
+      setDetails(initialData.details || "");
+      setDate(initialData.date);
+      setStartTime(initialData.startTime);
+      setEndTime(initialData.endTime);
+
+      const vIdx = VENUES.findIndex(v => v.tr === initialData.venue.tr && v.en === initialData.venue.en);
+      if (vIdx >= 0) {
+        setVenueIndex(String(vIdx));
+        setCustomVenueTr("");
+        setCustomVenueEn("");
+      } else if (initialData.customVenue) {
+        setVenueIndex(String(VENUES.findIndex(v => v.tr === "Diğer")));
+        setCustomVenueTr(initialData.customVenue.tr);
+        setCustomVenueEn(initialData.customVenue.en);
+      }
+
+      setOpenTo(initialData.openTo);
+      setLanguage(initialData.language);
+      setGePoints(initialData.gePoints || "");
+
+      const fIdx = FORMATS.findIndex(f => f.tr === initialData.format.tr && f.en === initialData.format.en);
+      setFormatIndex(fIdx >= 0 ? String(fIdx) : "");
+    } else if (open && !initialData) {
+      resetForm();
+    }
+  }, [open, initialData, initialDate]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!clubIndex || !titleTr || !titleEn || !eventTypeIndex || !date || !startTime || !endTime || !venueIndex || !formatIndex) return;
@@ -75,7 +123,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
     const fmt = FORMATS[parseInt(formatIndex)];
 
     const event: CalendarEvent = {
-      id: crypto.randomUUID(),
+      id: initialData ? initialData.id : crypto.randomUUID(),
       club,
       title: { tr: titleTr, en: titleEn },
       eventType,
@@ -91,10 +139,11 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
       language,
       gePoints,
       format: fmt,
+      isCancelled: initialData ? initialData.isCancelled : false
     };
 
     onSubmit(event);
-    resetForm();
+    if (!initialData) resetForm();
     onClose();
   };
 
@@ -103,7 +152,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
       <DialogContent className="max-w-2xl max-h-[90vh] p-0">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-xl font-bold">
-            Yeni Etkinlik Oluştur / Create New Event
+            {initialData ? "Etkinliği Düzenle / Edit Event" : "Yeni Etkinlik Oluştur / Create New Event"}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[calc(90vh-100px)]">
@@ -480,7 +529,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
                 İptal / Cancel
               </Button>
               <Button type="submit">
-                Etkinlik Oluştur / Create Event
+                {initialData ? "Değişiklikleri Kaydet / Save Changes" : "Etkinlik Oluştur / Create Event"}
               </Button>
             </div>
           </form>

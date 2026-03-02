@@ -20,4 +20,5 @@ export interface CalendarEvent {
   language: string;
   gePoints: string;
   format: BilingualText; // Face to Face / Online
+  isCancelled?: boolean;
 }

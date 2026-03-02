@@ -135,7 +135,8 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     const lines3 = doc.splitTextToSize(col3, 39);
     const lines7 = doc.splitTextToSize(col7, 108);
 
-    const maxLines = Math.max(lines1.length, lines2.length, lines3.length, lines7.length);
+    const lines1TotalCount = ev.isCancelled ? lines1.length + 1 : lines1.length;
+    const maxLines = Math.max(lines1TotalCount, lines2.length, lines3.length, lines7.length);
     const rowH = Math.max(8, maxLines * 4 + 2);
 
     // Check pagination
@@ -171,8 +172,13 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     doc.setTextColor(30, 30, 30);
 
     // Col 1: Date/Time (Bold)
-    doc.setFont("helvetica", "bold");
+    doc.setFont("times", "bold");
     doc.text(lines1, margin + 2, yPos + 4);
+    if (ev.isCancelled) {
+      doc.setTextColor(220, 38, 38);
+      doc.text("CANCELLED", margin + 2, yPos + 4 + (lines1.length * 4));
+      doc.setTextColor(30, 30, 30);
+    }
 
     // Col 2: Club
     doc.setFont("times", "normal");

@@ -8,11 +8,37 @@ import EventList from "@/components/EventList";
 import { useEvents } from "@/hooks/useEvents";
 import { exportCalendarPdf } from "@/lib/pdfExport";
 
+import { CalendarEvent } from "@/types/event";
+
 const Index = () => {
-  const { events, addEvent, deleteEvent } = useEvents();
+  const { events, addEvent, updateEvent, deleteEvent } = useEvents();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+
+  const handleEdit = (event: CalendarEvent) => {
+    setEditingEvent(event);
+    setFormOpen(true);
+  };
+
+  const handleToggleCancel = (event: CalendarEvent) => {
+    updateEvent({ ...event, isCancelled: !event.isCancelled });
+  };
+
+  const handleFormSubmit = (event: CalendarEvent) => {
+    if (editingEvent) {
+      updateEvent(event);
+    } else {
+      addEvent(event);
+    }
+    setEditingEvent(null);
+  };
+
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditingEvent(null);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,7 +71,7 @@ const Index = () => {
             </Button>
             <Button
               size="sm"
-              onClick={() => setFormOpen(true)}
+              onClick={() => { setEditingEvent(null); setFormOpen(true); }}
               className="gap-1.5 text-xs"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -77,6 +103,8 @@ const Index = () => {
                 events={events}
                 selectedDate={selectedDate}
                 onDelete={deleteEvent}
+                onEdit={handleEdit}
+                onToggleCancel={handleToggleCancel}
               />
             </div>
           </div>
@@ -86,9 +114,10 @@ const Index = () => {
       {/* Event Form */}
       <EventForm
         open={formOpen}
-        onClose={() => setFormOpen(false)}
-        onSubmit={addEvent}
+        onClose={closeForm}
+        onSubmit={handleFormSubmit}
         initialDate={selectedDate}
+        initialData={editingEvent}
       />
     </div>
   );
