@@ -162,7 +162,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
               <Label className="text-sm font-semibold">
                 Düzenleyen Kulüp veya Topluluk / Club or Society
               </Label>
-              <Popover open={clubOpen} onOpenChange={setClubOpen}>
+              <Popover open={clubOpen} onOpenChange={setClubOpen} modal={true}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -222,7 +222,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
             {/* Event Type */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-semibold">Etkinlik Türü / Type of Activity</Label>
-              <Popover open={eventTypeOpen} onOpenChange={setEventTypeOpen}>
+              <Popover open={eventTypeOpen} onOpenChange={setEventTypeOpen} modal={true}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -310,7 +310,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
             {/* Venue */}
             <div className="flex flex-col gap-2">
               <Label className="text-sm font-semibold">Yer / Venue</Label>
-              <Popover open={venueOpen} onOpenChange={setVenueOpen}>
+              <Popover open={venueOpen} onOpenChange={setVenueOpen} modal={true}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -373,7 +373,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
             <div className="grid grid-cols-3 gap-5">
               <div className="flex flex-col gap-2">
                 <Label className="text-sm font-semibold">Kimlere Açık / Open to</Label>
-                <Popover open={openToOpen} onOpenChange={setOpenToOpen}>
+                <Popover open={openToOpen} onOpenChange={setOpenToOpen} modal={true}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -418,7 +418,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
 
               <div className="flex flex-col gap-2">
                 <Label className="text-sm font-semibold">Etkinlik Dili / Language</Label>
-                <Popover open={languageOpen} onOpenChange={setLanguageOpen}>
+                <Popover open={languageOpen} onOpenChange={setLanguageOpen} modal={true}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -463,7 +463,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
 
               <div className="flex flex-col gap-2">
                 <Label className="text-sm font-semibold">Yüz Yüze/Çevrimiçi</Label>
-                <Popover open={formatOpen} onOpenChange={setFormatOpen}>
+                <Popover open={formatOpen} onOpenChange={setFormatOpen} modal={true}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
