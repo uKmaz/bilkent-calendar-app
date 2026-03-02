@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import { CalendarEvent } from "@/types/event";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth } from "date-fns";
+import { timesNormal, timesBold } from "./fonts/times";
 
 export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
@@ -8,6 +9,16 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
   const pageH = 210;
   const margin = 10;
   let yPos = margin;
+
+  // Add Custom Fonts
+  doc.addFileToVFS("times-normal.ttf", timesNormal);
+  doc.addFont("times-normal.ttf", "times", "normal");
+
+  doc.addFileToVFS("times-bold.ttf", timesBold);
+  doc.addFont("times-bold.ttf", "times", "bold");
+
+  // Default to times instead of helvetica
+  doc.setFont("times");
 
   // Filter events for current month only and sort them
   const monthEvents = events
@@ -27,7 +38,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     doc.setLineWidth(0.2);
     doc.rect(margin, yPos, pageW - margin * 2, 10, "S");
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("times", "bold");
     doc.setFontSize(8);
     doc.setTextColor(30, 30, 30);
 
@@ -58,7 +69,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
 
   const drawMonthTitle = () => {
     doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("times", "bold");
     doc.setTextColor(0, 0, 0);
     const monthEn = format(currentMonth, "MMMM").toUpperCase();
     const monthTrMapping: Record<string, string> = {
@@ -118,7 +129,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     const col7 = `${ev.title.tr} [${ev.title.en}]\n${venueTr}\nOpen to: ${ev.openTo}`;
 
     // Calculate row height
-    doc.setFont("helvetica", "normal");
+    doc.setFont("times", "normal");
     const lines1 = doc.splitTextToSize(col1, 24);
     const lines2 = doc.splitTextToSize(col2, 60);
     const lines3 = doc.splitTextToSize(col3, 39);
@@ -164,7 +175,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     doc.text(lines1, margin + 2, yPos + 4);
 
     // Col 2: Club
-    doc.setFont("helvetica", "normal");
+    doc.setFont("times", "normal");
     doc.text(lines2, margin + 28, yPos + 4);
 
     // Col 3: Activity
@@ -175,7 +186,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     doc.text(col4, margin + 134, yPos + 4 + (rowH - 8) / 2, { align: "center" });
 
     // Col 5: GE
-    doc.setFont("helvetica", "normal");
+    doc.setFont("times", "normal");
     doc.text(col5, margin + 147, yPos + 4 + (rowH - 8) / 2, { align: "center" });
 
     // Col 6: Format
@@ -186,7 +197,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
     const titleLines = doc.splitTextToSize(`${ev.title.tr} [${ev.title.en}]`, 108);
     doc.text(titleLines, margin + 167, yPos + 4);
 
-    doc.setFont("helvetica", "normal");
+    doc.setFont("times", "normal");
     const venueOpenLines = doc.splitTextToSize(`${venueTr}\nOpen to: ${ev.openTo}`, 108);
     doc.text(venueOpenLines, margin + 167, yPos + 4 + (titleLines.length * 4));
 
@@ -194,7 +205,7 @@ export function exportCalendarPdf(events: CalendarEvent[], currentMonth: Date) {
   });
 
   if (monthEvents.length === 0) {
-    doc.setFont("helvetica", "italic");
+    doc.setFont("times", "italic");
     doc.text("Bu ay için etkinlik bulunamadı. / No events found for this month.", margin + 5, yPos + 10);
   }
 
