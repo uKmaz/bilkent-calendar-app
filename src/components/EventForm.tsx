@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface EventFormProps {
   open: boolean;
@@ -28,15 +31,22 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
   const [guestSpeakers, setGuestSpeakers] = useState("");
   const [details, setDetails] = useState("");
   const [date, setDate] = useState(initialDate ? format(initialDate, "yyyy-MM-dd") : "");
-  const [time, setTime] = useState("");
-  const [duration, setDuration] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [venueIndex, setVenueIndex] = useState("");
   const [customVenueTr, setCustomVenueTr] = useState("");
   const [customVenueEn, setCustomVenueEn] = useState("");
   const [openTo, setOpenTo] = useState("");
   const [language, setLanguage] = useState("");
-  const [gePoints, setGePoints] = useState("0");
+  const [gePoints, setGePoints] = useState("");
   const [formatIndex, setFormatIndex] = useState("");
+
+  const [clubOpen, setClubOpen] = useState(false);
+  const [eventTypeOpen, setEventTypeOpen] = useState(false);
+  const [venueOpen, setVenueOpen] = useState(false);
+  const [openToOpen, setOpenToOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [formatOpen, setFormatOpen] = useState(false);
 
   const selectedEventType = eventTypeIndex ? EVENT_TYPES[parseInt(eventTypeIndex)] : null;
   const selectedVenue = venueIndex ? VENUES[parseInt(venueIndex)] : null;
@@ -47,13 +57,13 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
     setClubIndex(""); setTitleTr(""); setTitleEn(""); setEventTypeIndex("");
     setCustomEventTypeTr(""); setCustomEventTypeEn(""); setGuestSpeakers("");
     setDetails(""); setDate(initialDate ? format(initialDate, "yyyy-MM-dd") : "");
-    setTime(""); setDuration(""); setVenueIndex(""); setCustomVenueTr("");
-    setCustomVenueEn(""); setOpenTo(""); setLanguage(""); setGePoints("0"); setFormatIndex("");
+    setStartTime(""); setEndTime(""); setVenueIndex(""); setCustomVenueTr("");
+    setCustomVenueEn(""); setOpenTo(""); setLanguage(""); setGePoints(""); setFormatIndex("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clubIndex || !titleTr || !titleEn || !eventTypeIndex || !date || !time || !duration || !venueIndex || !formatIndex) return;
+    if (!clubIndex || !titleTr || !titleEn || !eventTypeIndex || !date || !startTime || !endTime || !venueIndex || !formatIndex) return;
 
     const club = CLUBS[parseInt(clubIndex)];
     const eventType = isOtherEventType
@@ -73,8 +83,8 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
       guestSpeakers,
       details,
       date,
-      time,
-      duration,
+      startTime,
+      endTime,
       venue,
       customVenue: isOtherVenue ? { tr: customVenueTr, en: customVenueEn } : undefined,
       openTo,
@@ -99,20 +109,53 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
         <ScrollArea className="max-h-[calc(90vh-100px)]">
           <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4">
             {/* Club */}
-            <div>
+            <div className="flex flex-col gap-1">
               <Label className="text-xs font-semibold">
                 Düzenleyen Kulüp veya Topluluk / Club or Society
               </Label>
-              <Select value={clubIndex} onValueChange={setClubIndex}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz / Select..." /></SelectTrigger>
-                <SelectContent className="max-h-60">
-                  {CLUBS.map((c, i) => (
-                    <SelectItem key={i} value={String(i)}>
-                      {c.tr} / {c.en}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={clubOpen} onOpenChange={setClubOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={clubOpen}
+                    className="w-full justify-between font-normal"
+                  >
+                    {clubIndex
+                      ? `${CLUBS[parseInt(clubIndex)].tr} / ${CLUBS[parseInt(clubIndex)].en}`
+                      : "Seçiniz / Select..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Kulüp ara / Search club..." />
+                    <CommandList>
+                      <CommandEmpty>Kulüp bulunamadı. / No club found.</CommandEmpty>
+                      <CommandGroup>
+                        {CLUBS.map((c, i) => (
+                          <CommandItem
+                            key={i}
+                            value={`${c.tr} ${c.en}`}
+                            onSelect={() => {
+                              setClubIndex(String(i));
+                              setClubOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                clubIndex === String(i) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {c.tr} / {c.en}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* Title */}
@@ -128,18 +171,51 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
             </div>
 
             {/* Event Type */}
-            <div>
+            <div className="flex flex-col gap-1">
               <Label className="text-xs font-semibold">Etkinlik Türü / Type of Activity</Label>
-              <Select value={eventTypeIndex} onValueChange={setEventTypeIndex}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz / Select..." /></SelectTrigger>
-                <SelectContent>
-                  {EVENT_TYPES.map((t, i) => (
-                    <SelectItem key={i} value={String(i)}>
-                      {t.tr} / {t.en}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={eventTypeOpen} onOpenChange={setEventTypeOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={eventTypeOpen}
+                    className="w-full justify-between font-normal"
+                  >
+                    {eventTypeIndex
+                      ? `${EVENT_TYPES[parseInt(eventTypeIndex)].tr} / ${EVENT_TYPES[parseInt(eventTypeIndex)].en}`
+                      : "Seçiniz / Select..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Tür ara / Search type..." />
+                    <CommandList>
+                      <CommandEmpty>Tür bulunamadı. / No type found.</CommandEmpty>
+                      <CommandGroup>
+                        {EVENT_TYPES.map((t, i) => (
+                          <CommandItem
+                            key={i}
+                            value={`${t.tr} ${t.en}`}
+                            onSelect={() => {
+                              setEventTypeIndex(String(i));
+                              setEventTypeOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                eventTypeIndex === String(i) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {t.tr} / {t.en}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             {isOtherEventType && (
               <div className="grid grid-cols-2 gap-3">
@@ -166,42 +242,70 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
               <Textarea className="mt-1" value={details} onChange={(e) => setDetails(e.target.value)} rows={2} placeholder="Etkinlik detayları / Event details" />
             </div>
 
-            {/* Date, Time, Duration */}
+            {/* Date, Start Time, End Time */}
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label className="text-xs font-semibold">Tarih / Date</Label>
                 <Input className="mt-1" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs font-semibold">Zaman / Time</Label>
-                <Input className="mt-1" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+                <Label className="text-xs font-semibold">Başlangıç / Start Time</Label>
+                <Input className="mt-1" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs font-semibold">Süre / Duration</Label>
-                <Select value={duration} onValueChange={setDuration}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz..." /></SelectTrigger>
-                  <SelectContent>
-                    {DURATIONS.map((d) => (
-                      <SelectItem key={d} value={d}>{d}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-xs font-semibold">Bitiş / End Time</Label>
+                <Input className="mt-1" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
               </div>
             </div>
 
             {/* Venue */}
-            <div>
+            <div className="flex flex-col gap-1">
               <Label className="text-xs font-semibold">Yer / Venue</Label>
-              <Select value={venueIndex} onValueChange={setVenueIndex}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz / Select..." /></SelectTrigger>
-                <SelectContent>
-                  {VENUES.map((v, i) => (
-                    <SelectItem key={i} value={String(i)}>
-                      {v.tr === v.en ? v.tr : `${v.tr} / ${v.en}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={venueOpen} onOpenChange={setVenueOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={venueOpen}
+                    className="w-full justify-between font-normal"
+                  >
+                    {venueIndex
+                      ? VENUES[parseInt(venueIndex)].tr === VENUES[parseInt(venueIndex)].en
+                        ? VENUES[parseInt(venueIndex)].tr
+                        : `${VENUES[parseInt(venueIndex)].tr} / ${VENUES[parseInt(venueIndex)].en}`
+                      : "Seçiniz / Select..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Yer ara / Search venue..." />
+                    <CommandList>
+                      <CommandEmpty>Yer bulunamadı. / No venue found.</CommandEmpty>
+                      <CommandGroup>
+                        {VENUES.map((v, i) => (
+                          <CommandItem
+                            key={i}
+                            value={`${v.tr} ${v.en}`}
+                            onSelect={() => {
+                              setVenueIndex(String(i));
+                              setVenueOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                venueIndex === String(i) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {v.tr === v.en ? v.tr : `${v.tr} / ${v.en}`}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             {isOtherVenue && (
               <div className="grid grid-cols-2 gap-3">
@@ -218,58 +322,156 @@ export default function EventForm({ open, onClose, onSubmit, initialDate }: Even
 
             {/* Open To, Language, Format */}
             <div className="grid grid-cols-3 gap-3">
-              <div>
+              <div className="flex flex-col gap-1">
                 <Label className="text-xs font-semibold">Kimlere Açık / Open to</Label>
-                <Select value={openTo} onValueChange={setOpenTo}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz..." /></SelectTrigger>
-                  <SelectContent>
-                    {OPEN_TO_OPTIONS.map((o, i) => (
-                      <SelectItem key={i} value={`${o.tr} / ${o.en}`}>
-                        {o.tr} / {o.en}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={openToOpen} onOpenChange={setOpenToOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openToOpen}
+                      className="w-full justify-between font-normal px-2"
+                    >
+                      {openTo || "Seçiniz..."}
+                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Ara..." />
+                      <CommandList>
+                        <CommandEmpty>Bulunamadı.</CommandEmpty>
+                        <CommandGroup>
+                          {OPEN_TO_OPTIONS.map((o, i) => (
+                            <CommandItem
+                              key={i}
+                              value={`${o.tr} ${o.en}`}
+                              onSelect={() => {
+                                setOpenTo(`${o.tr} / ${o.en}`);
+                                setOpenToOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  openTo === `${o.tr} / ${o.en}` ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {o.tr} / {o.en}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
-              <div>
+
+              <div className="flex flex-col gap-1">
                 <Label className="text-xs font-semibold">Etkinlik Dili / Language</Label>
-                <Select value={language} onValueChange={setLanguage}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz..." /></SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGES.map((l, i) => (
-                      <SelectItem key={i} value={`${l.tr} / ${l.en}`}>
-                        {l.tr} / {l.en}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={languageOpen} onOpenChange={setLanguageOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={languageOpen}
+                      className="w-full justify-between font-normal px-2"
+                    >
+                      {language || "Seçiniz..."}
+                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Ara..." />
+                      <CommandList>
+                        <CommandEmpty>Bulunamadı.</CommandEmpty>
+                        <CommandGroup>
+                          {LANGUAGES.map((l, i) => (
+                            <CommandItem
+                              key={i}
+                              value={`${l.tr} ${l.en}`}
+                              onSelect={() => {
+                                setLanguage(`${l.tr} / ${l.en}`);
+                                setLanguageOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  language === `${l.tr} / ${l.en}` ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {l.tr} / {l.en}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
-              <div>
+
+              <div className="flex flex-col gap-1">
                 <Label className="text-xs font-semibold">Yüz Yüze/Çevrimiçi</Label>
-                <Select value={formatIndex} onValueChange={setFormatIndex}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Seçiniz..." /></SelectTrigger>
-                  <SelectContent>
-                    {FORMATS.map((f, i) => (
-                      <SelectItem key={i} value={String(i)}>
-                        {f.tr} / {f.en}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={formatOpen} onOpenChange={setFormatOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={formatOpen}
+                      className="w-full justify-between font-normal px-2"
+                    >
+                      {formatIndex
+                        ? `${FORMATS[parseInt(formatIndex)].tr} / ${FORMATS[parseInt(formatIndex)].en}`
+                        : "Seçiniz..."}
+                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Ara..." />
+                      <CommandList>
+                        <CommandEmpty>Bulunamadı.</CommandEmpty>
+                        <CommandGroup>
+                          {FORMATS.map((f, i) => (
+                            <CommandItem
+                              key={i}
+                              value={`${f.tr} ${f.en}`}
+                              onSelect={() => {
+                                setFormatIndex(String(i));
+                                setFormatOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  formatIndex === String(i) ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {f.tr} / {f.en}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
             {/* GE Points */}
             <div>
               <Label className="text-xs font-semibold">GE250-251 Puanı / GE250-251 Points</Label>
-              <Select value={gePoints} onValueChange={setGePoints}>
-                <SelectTrigger className="mt-1 w-32"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {GE_POINTS.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                className="mt-1 w-32"
+                type="number"
+                min="0"
+                max="100"
+                value={gePoints}
+                onChange={(e) => setGePoints(e.target.value)}
+                placeholder="Örn: 2"
+              />
             </div>
 
             {/* Submit */}

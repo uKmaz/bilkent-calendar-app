@@ -151,7 +151,7 @@ export default function CalendarGrid({
                     key={ev.id}
                     className="text-[10px] leading-tight px-1 py-0.5 rounded bg-primary/10 text-primary truncate font-medium"
                   >
-                    {ev.time} {ev.title.tr}
+                    {ev.startTime} {ev.title.tr}
                   </div>
                 ))}
                 {dayEvents.length > 3 && (

@@ -77,7 +77,7 @@ export default function EventList({ events, selectedDate, onDelete }: EventListP
               <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <Clock className="h-3 w-3 shrink-0" />
-                  <span>{ev.time} • {ev.duration}</span>
+                  <span>{ev.startTime} - {ev.endTime}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <MapPin className="h-3 w-3 shrink-0" />

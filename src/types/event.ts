@@ -12,8 +12,8 @@ export interface CalendarEvent {
   guestSpeakers: string;
   details: string;
   date: string; // ISO date string
-  time: string; // HH:mm
-  duration: string;
+  startTime: string; // HH:mm
+  endTime: string; // HH:mm
   venue: BilingualText;
   customVenue?: BilingualText;
   openTo: string;
