@@ -11,8 +11,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const TIME_OPTIONS = Array.from({ length: 24 * 4 }).map((_, i) => {
+  const hour = Math.floor(i / 4).toString().padStart(2, "0");
+  const minute = ((i % 4) * 15).toString().padStart(2, "0");
+  return `${hour}:${minute}`;
+});
 
 interface EventFormProps {
   open: boolean;
@@ -295,15 +302,43 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
             <div className="grid grid-cols-3 gap-5">
               <div>
                 <Label className="text-sm font-semibold">Tarih / Date</Label>
-                <Input className="mt-1.5" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <Input className="mt-1.5 w-full" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
-              <div>
-                <Label className="text-sm font-semibold">Başlangıç / Start Time</Label>
-                <Input className="mt-1.5" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+              <div className="flex flex-col">
+                <Label className="text-sm font-semibold flex-shrink-0">Başlangıç / Start Time</Label>
+                <Select value={startTime} onValueChange={setStartTime}>
+                  <SelectTrigger className={cn("mt-1.5 w-full flex-1", !startTime && "text-muted-foreground")}>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <SelectValue placeholder="Seçiniz..." />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_OPTIONS.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {t}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
-                <Label className="text-sm font-semibold">Bitiş / End Time</Label>
-                <Input className="mt-1.5" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+              <div className="flex flex-col">
+                <Label className="text-sm font-semibold flex-shrink-0">Bitiş / End Time</Label>
+                <Select value={endTime} onValueChange={setEndTime}>
+                  <SelectTrigger className={cn("mt-1.5 w-full flex-1", !endTime && "text-muted-foreground")}>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <SelectValue placeholder="Seçiniz..." />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_OPTIONS.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {t}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
