@@ -55,6 +55,10 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
   const [openToOpen, setOpenToOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [formatOpen, setFormatOpen] = useState(false);
+  const [startTimeOpen, setStartTimeOpen] = useState(false);
+  const [endTimeOpen, setEndTimeOpen] = useState(false);
+  const [startTimeSearch, setStartTimeSearch] = useState("");
+  const [endTimeSearch, setEndTimeSearch] = useState("");
 
   const selectedEventType = eventTypeIndex ? EVENT_TYPES[parseInt(eventTypeIndex)] : null;
   const selectedVenue = venueIndex ? VENUES[parseInt(venueIndex)] : null;
@@ -306,39 +310,130 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
               </div>
               <div className="flex flex-col">
                 <Label className="text-sm font-semibold flex-shrink-0">Başlangıç / Start Time</Label>
-                <Select value={startTime} onValueChange={setStartTime}>
-                  <SelectTrigger className={cn("mt-1.5 w-full flex-1", !startTime && "text-muted-foreground")}>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <SelectValue placeholder="Seçiniz..." />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIME_OPTIONS.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {t}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={startTimeOpen} onOpenChange={setStartTimeOpen} modal={true}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={startTimeOpen}
+                      className={cn("mt-1.5 w-full flex-1 justify-between font-normal", !startTime && "text-muted-foreground")}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 shrink-0" />
+                        {startTime || "Seçiniz..."}
+                      </div>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput
+                        placeholder="Yazın veya seçin... (Örn: 14:30)"
+                        value={startTimeSearch}
+                        onValueChange={setStartTimeSearch}
+                      />
+                      <CommandList className="max-h-[200px] overflow-y-auto">
+                        <CommandEmpty className="p-1">
+                          {startTimeSearch ? (
+                            <div
+                              className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setStartTime(startTimeSearch);
+                                setStartTimeOpen(false);
+                              }}
+                            >
+                              <Check className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center opacity-0" />
+                              "{startTimeSearch}" özel olarak ayarla
+                            </div>
+                          ) : (
+                            <div className="py-2 text-center text-sm text-muted-foreground">Bulunamadı.</div>
+                          )}
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {TIME_OPTIONS.map((t) => (
+                            <CommandItem
+                              key={t}
+                              value={t}
+                              onSelect={() => {
+                                setStartTime(t);
+                                setStartTimeOpen(false);
+                              }}
+                            >
+                              <Check className={cn("mr-2 h-4 w-4", startTime === t ? "opacity-100" : "opacity-0")} />
+                              {t}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
+
               <div className="flex flex-col">
                 <Label className="text-sm font-semibold flex-shrink-0">Bitiş / End Time</Label>
-                <Select value={endTime} onValueChange={setEndTime}>
-                  <SelectTrigger className={cn("mt-1.5 w-full flex-1", !endTime && "text-muted-foreground")}>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <SelectValue placeholder="Seçiniz..." />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIME_OPTIONS.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {t}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={endTimeOpen} onOpenChange={setEndTimeOpen} modal={true}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={endTimeOpen}
+                      className={cn("mt-1.5 w-full flex-1 justify-between font-normal", !endTime && "text-muted-foreground")}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 shrink-0" />
+                        {endTime || "Seçiniz..."}
+                      </div>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput
+                        placeholder="Yazın veya seçin... (Örn: 16:45)"
+                        value={endTimeSearch}
+                        onValueChange={setEndTimeSearch}
+                      />
+                      <CommandList className="max-h-[200px] overflow-y-auto">
+                        <CommandEmpty className="p-1">
+                          {endTimeSearch ? (
+                            <div
+                              className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setEndTime(endTimeSearch);
+                                setEndTimeOpen(false);
+                              }}
+                            >
+                              <Check className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center opacity-0" />
+                              "{endTimeSearch}" özel olarak ayarla
+                            </div>
+                          ) : (
+                            <div className="py-2 text-center text-sm text-muted-foreground">Bulunamadı.</div>
+                          )}
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {TIME_OPTIONS.map((t) => (
+                            <CommandItem
+                              key={t}
+                              value={t}
+                              onSelect={() => {
+                                setEndTime(t);
+                                setEndTimeOpen(false);
+                              }}
+                            >
+                              <Check className={cn("mr-2 h-4 w-4", endTime === t ? "opacity-100" : "opacity-0")} />
+                              {t}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
