@@ -98,7 +98,7 @@ const Index = () => {
 
           {/* Sidebar - Events for selected day */}
           <div className="lg:w-[340px] shrink-0">
-            <div className="sticky top-[72px] bg-card rounded-xl border border-border p-4">
+            <div className="sticky top-[72px] bg-card rounded-xl border border-border p-4 max-h-[calc(100vh-96px)] overflow-y-auto custom-scrollbar">
               <EventList
                 events={events}
                 selectedDate={selectedDate}
