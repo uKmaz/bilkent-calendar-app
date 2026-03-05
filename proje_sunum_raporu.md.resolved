@@ -1,0 +1,84 @@
+# Bilkent Etkinlik Takvimi (Event Scribe Duo) Proje Raporu
+
+Bu doküman, "Bilkent Etkinlik Takvimi" (Event Scribe Duo) projesinin teknik ve teknik olmayan detaylarını, amacını ve kullanılan teknolojilerini kapsamlı bir şekilde açıklamak amacıyla hazırlanmıştır. Projenizi hocanıza veya jüriye sunarken bu rehberi referans alabilirsiniz.
+
+---
+
+## 📌 1. Projenin Amacı ve Genel Bakış (Teknik Olmayan Açıklama)
+
+**Bilkent Etkinlik Takvimi**, Bilkent Üniversitesi bünyesindeki öğrenci kulüpleri, toplulukları ve departmanları tarafından düzenlenen etkinliklerin tek bir çatı altında planlanmasını, takip edilmesini ve organize edilmesini sağlayan modern bir web uygulamasıdır.
+
+### Temel Problemler ve Çözümleri:
+- **Problem:** Etkinliklerin takibi zor olabilir, çakışmalar yaşanabilir ve öğrencilerin GE250/251 gibi zorunlu etkinlik puanlarını takip edebileceği merkezi bir sistem eksikliği olabilir.
+- **Çözüm:** Bu uygulama sayesinde kulüpler etkinliklerini sisteme girebilir, öğrenciler takvim üzerinden aylık olarak tüm etkinlikleri (yüz yüze, online, hibrit) görsel bir arayüzde görebilir. Ayrıca bu takvim PDF olarak dışa aktarılıp basılı veya dijital bülten olarak paylaşılabilir.
+
+### Hedef Kitle:
+- Etkinlik düzenleyen Üniversite Kulüpleri / Toplulukları
+- Etkinliklere katılmak isteyen Öğrenciler (Özellikle GE250/251 puanı toplamak isteyenler)
+- Etkinlik takvimini denetleyen ve onaylayan Üniversite İdari Birimleri
+
+---
+
+## 💻 2. Kullanılan Teknolojiler ve Mimari (Teknik Detaylar)
+
+Proje, güncel endüstri standartlarına uygun modern bir **Frontend (Önyüz)** teknoloji yığını ile geliştirilmiştir. Veritabanı veya sunucu (backend) ihtiyacını ilk aşamada ortadan kaldırmak için **Local Storage (Yerel Depolama)** kullanılarak tarayıcı üzerinde çalışacak şekilde (Client-side) tasarlanmıştır.
+
+### A. Temel Teknolojiler (Core Stack)
+- **React (v18):** Kullanıcı arayüzünü (UI) oluşturmak için kullanılan temel JavaScript kütüphanesidir. Bileşen (component) bazlı mimarisi sayesinde kodun tekrar kullanılabilirliği ve bakımı kolaylaştırılmıştır.
+- **TypeScript:** JavaScript'in statik tip denetimli bir üst kümesidir. Projede `CalendarEvent` gibi veri modellerinin (interface) tanımlanmasıyla hata payı en aza indirilmiş, kodun güvenilirliği (type-safety) artırılmıştır.
+- **Vite:** Çok hızlı bir modern frontend geliştirme aracıdır (build tool). Geliştirme sürecinde anlık yenileme (HMR) ve projenin hızlıca derlenmesi için Webpack yerine tercih edilmiştir.
+
+### B. Arayüz ve Tasarım (Styling & UI)
+- **Tailwind CSS:** Utility-first yaklaşımını benimseyen modern bir CSS framework'üdür. Projedeki tüm stillendirmeler (`bg-background`, `text-primary`, `flex`, vb.) bu sayede hızlı, duyarlı (responsive) ve tutarlı bir şekilde yapılmıştır.
+- **Shadcn UI & Radix UI:** Erişilebilirliği (accessibility) yüksek, modern ve özelleştirilebilir arayüz bileşenleridir. Dialog (Açılır pencereler), Popover, Select, Command (Arama çubuğu) gibi karmaşık bileşenler sıfırdan yazılmak yerine bu kütüphanelerle projeye entegre edilmiştir.
+- **Lucide React:** Projedeki modern, vektörel (SVG) ve minimalist ikonların sağlandığı geniş ikon kütüphanesidir.
+
+### C. Fonksiyonellik ve Araçlar (Utilities)
+- **date-fns:** Tarih ve saat formatlama, ayın başlangıç/bitiş günlerini bulma, haftaları hesaplama gibi karmaşık zaman işlemleri için kullanılan hafif bir tarih kütüphanesidir.
+- **jsPDF:** Projedeki etkinliklerin bir tablo şeklinde PDF olarak indirilmesini sağlayan kütüphanedir. Özel font destekleri (Times New Roman) projeye gömülerek PDF çıktılarının resmi ve kurumsal bir görünüme sahip olması sağlanmıştır.
+- **React Router DOM:** Uygulama içi sayfa yönlendirmeleri (Routing) için kullanılmıştır.
+
+---
+
+## ⚙️ 3. Uygulamanın Temel Özellikleri (Core Features)
+
+1. **Dinamik Takvim Görünümü ([CalendarGrid.tsx](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/components/CalendarGrid.tsx)):**
+   - Kullanıcılar aylık görünümleri sekmeler aracılığıyla değiştirebilir.
+   - O gün içerisinde olan etkinlikler, takvim hücrelerinde küçük özetler halinde (saat ve başlık) görüntülenir.
+   - Özel tasarım sayesinde geçmiş aylar, güncel ay ve hafta sonları görsel olarak birbirinden ayrılmıştır.
+
+2. **Kapsamlı Etkinlik Formu ([EventForm.tsx](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/components/EventForm.tsx)):**
+   - Yeni etkinlik oluştururken zengin bir form sunulur. Bu formda: Kulüp adı, İngilizce/Türkçe başlık seçenekleri, Etkinlik Türü, Saat Aralığı, Konum (Venue), Katılımcı Kitlesi (Kimlere açık), Dil ve **GE250/251 puanı** gibi spesifik detaylar istenir.
+   - Gelişmiş arama özelliği (`Command` bileşeni) sayesinde yüzlerce kulüp arasından hızlıca seçim yapılabilir.
+
+3. **Etkinlik Yönetimi (CRUD İşlemleri - [useEvents.ts](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/hooks/useEvents.ts)):**
+   - **C**reate (Oluşturma): Yeni etkinlik eklenebilir.
+   - **R**ead (Okuma): Eklenen etkinlikler takvimde ve yan panelde listelenir.
+   - **U**pdate (Güncelleme): Seçili etkinliğin tarihi veya içeriği düzenlenebilir. Etkinliğin "İptal Edildi" (Cancelled) olarak işaretlenmesi (Toggle status) desteklenmektedir.
+   - **D**elete (Silme): Etkinlikler sistemden tamamen silinebilir.
+
+4. **PDF Raporlama ve Dışa Aktarma ([pdfExport.ts](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/lib/pdfExport.ts)):**
+   - Belirli bir ayın etkinlikleri, özel olarak tasarlanmış kurumsal bir şablona uygun şekilde PDF'e dönüştürülür.
+   - PDF tablosunda; Yatay (Landscape) format kullanılmış, başlıklar "Tarih/Saat, Kulüp, Etkinlik Adı, Dil, GE Puanı, Katılım Şekli (F2F/OnL)" şeklinde düzenlenmiş ve iptal edilen etkinlikler kırmızı uyarılarla PDF'e yansıtılmıştır.
+
+---
+
+## 🚀 4. Mimari Tasarım ve Veri Akışı
+
+Projenin veri yönetimi, modern React mimarisi olan **Custom Hooks (Özel Hook'lar)** ile sağlanmaktadır.
+
+- **State Management (Durum Yönetimi):** Uygulamadaki etkinlik verisi (state) [useEvents.ts](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/hooks/useEvents.ts) üzerinden merkezi olarak yönetilmektedir.
+- **Kalıcı Veri (Data Persistence):** Girilen bilgiler, tarayıcı kapatıldığında kaybolmaması için `localStorage` (Yerel Depolama) kullanılarak kullanıcının cihazına kaydedilir. JSON formatında okunan ve yazılan veriler (`bilkent-calendar-events` anahtarıyla) uygulama açıldığında otomatik olarak yüklenir.
+- **Modülerlik:** Proje, mantıksal klasörlere ayrılmıştır (`components`, `pages`, `hooks`, `lib`, `data`). Bu bağlamda kulüp listeleri ([clubs.ts](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/data/clubs.ts)) ve seçenekler ([options.ts](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/data/options.ts)) gibi sabit veriler `data` klasöründen çekilerek formların temiz ("clean code") kalması sağlanmıştır.
+
+---
+
+## 💡 Hocaya (Jüriye) Sunarken Vurgulanması Gereken Teknik Noktalar
+
+Sunum sırasında profesyonelliğinizi göstermek için aşağıdaki teknik terminolojileri kullanabilirsiniz:
+
+1. *"Projemi **Component-based (Bileşen tabanlı)** bir mimariyle React kullanarak tasarladım. Bu sayede Takvim, Form ve Liste gibi bölümleri birbirinden bağımsız modüller halinde geliştirdim."*
+2. *"Backend kullanmadan veriyi istemci tarafında (**Client-side Persistent Storage**) sakladım. İleride bir backend (Firebase, Supabase veya Node.js) entegre etmek istersem mimariyi buna hazır şekilde tasarladım, sadece [useEvents.ts](file:///c:/Users/Ucmaz%20pc/Git/event-scribe-duo/src/hooks/useEvents.ts) içerisindeki veri çekme mantığını değiştirmem yeterli olacak."*
+3. *"TypeScript kullanarak projemi **Type-Safe** (Tip güvenli) hale getirdim. Böylece derleme (compile) aşamasında hataları yakaladım ve çalışma zamanı (runtime) çökmelerini engelledim."*
+4. *"Arayüzde **Tailwind CSS** ve **Shadcn UI** kullanarak, modern ve kullanıcı deneyimi (UX) yüksek, erişilebilir (accessible) popover ve arama öğelerini entegre ettim."*
+5. *"Karmaşık tablo çizim algoritmaları gerektiren PDF çıktısını **jsPDF** kütüphanesi kullanarak milimetrik hassasiyetle kodladım ve kurumsallık adına harici Times New Roman fontlarını projeme gömdüm (VFS - Virtual File System)."*

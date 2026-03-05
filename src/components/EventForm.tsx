@@ -342,6 +342,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                                 e.stopPropagation();
                                 setStartTime(startTimeSearch);
                                 setStartTimeOpen(false);
+                                setEndTimeOpen(true);
                               }}
                             >
                               <Check className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center opacity-0" />
@@ -359,6 +360,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                               onSelect={() => {
                                 setStartTime(t);
                                 setStartTimeOpen(false);
+                                setEndTimeOpen(true);
                               }}
                             >
                               <Check className={cn("mr-2 h-4 w-4", startTime === t ? "opacity-100" : "opacity-0")} />
