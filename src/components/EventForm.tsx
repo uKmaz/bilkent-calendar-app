@@ -160,7 +160,7 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[95vh] p-0">
+      <DialogContent className="w-[95vw] max-w-3xl max-h-[95vh] p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-xl font-bold">
             {initialData ? "Etkinliği Düzenle / Edit Event" : "Yeni Etkinlik Oluştur / Create New Event"}
@@ -181,10 +181,12 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                     aria-expanded={clubOpen}
                     className="w-full justify-between font-normal"
                   >
-                    {clubIndex
-                      ? `${CLUBS[parseInt(clubIndex)].tr} / ${CLUBS[parseInt(clubIndex)].en}`
-                      : "Seçiniz / Select..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <span className="truncate text-left flex-1 min-w-0">
+                      {clubIndex
+                        ? `${CLUBS[parseInt(clubIndex)].tr} / ${CLUBS[parseInt(clubIndex)].en}`
+                        : "Seçiniz / Select..."}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-none" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
@@ -241,10 +243,12 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                     aria-expanded={eventTypeOpen}
                     className="w-full justify-between font-normal"
                   >
-                    {eventTypeIndex
-                      ? `${EVENT_TYPES[parseInt(eventTypeIndex)].tr} / ${EVENT_TYPES[parseInt(eventTypeIndex)].en}`
-                      : "Seçiniz / Select..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <span className="truncate text-left flex-1 min-w-0">
+                      {eventTypeIndex
+                        ? `${EVENT_TYPES[parseInt(eventTypeIndex)].tr} / ${EVENT_TYPES[parseInt(eventTypeIndex)].en}`
+                        : "Seçiniz / Select..."}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-none" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
@@ -450,12 +454,14 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                     aria-expanded={venueOpen}
                     className="w-full justify-between font-normal"
                   >
-                    {venueIndex
-                      ? VENUES[parseInt(venueIndex)].tr === VENUES[parseInt(venueIndex)].en
-                        ? VENUES[parseInt(venueIndex)].tr
-                        : `${VENUES[parseInt(venueIndex)].tr} / ${VENUES[parseInt(venueIndex)].en}`
-                      : "Seçiniz / Select..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <span className="truncate text-left flex-1 min-w-0">
+                      {venueIndex
+                        ? VENUES[parseInt(venueIndex)].tr === VENUES[parseInt(venueIndex)].en
+                          ? VENUES[parseInt(venueIndex)].tr
+                          : `${VENUES[parseInt(venueIndex)].tr} / ${VENUES[parseInt(venueIndex)].en}`
+                        : "Seçiniz / Select..."}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-none" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
@@ -513,8 +519,10 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                       aria-expanded={openToOpen}
                       className="w-full justify-between font-normal px-2"
                     >
-                      {openTo || "Seçiniz..."}
-                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+                      <span className="truncate text-left flex-1 min-w-0">
+                        {openTo || "Seçiniz..."}
+                      </span>
+                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50 flex-none" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
@@ -558,8 +566,10 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                       aria-expanded={languageOpen}
                       className="w-full justify-between font-normal px-2"
                     >
-                      {language || "Seçiniz..."}
-                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+                      <span className="truncate text-left flex-1 min-w-0">
+                        {language || "Seçiniz..."}
+                      </span>
+                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50 flex-none" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
@@ -603,10 +613,12 @@ export default function EventForm({ open, onClose, onSubmit, initialDate, initia
                       aria-expanded={formatOpen}
                       className="w-full justify-between font-normal px-2"
                     >
-                      {formatIndex
-                        ? `${FORMATS[parseInt(formatIndex)].tr} / ${FORMATS[parseInt(formatIndex)].en}`
-                        : "Seçiniz..."}
-                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+                      <span className="truncate text-left flex-1 min-w-0">
+                        {formatIndex
+                          ? `${FORMATS[parseInt(formatIndex)].tr} / ${FORMATS[parseInt(formatIndex)].en}`
+                          : "Seçiniz..."}
+                      </span>
+                      <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50 flex-none" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
